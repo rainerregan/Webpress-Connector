@@ -1,17 +1,32 @@
-<h2>Rectangle Creator</h2>
-<p>Count: <input id="count" value="5"></p>
-<button id="create">Create</button>
-<button id="cancel">Cancel</button>
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 16px;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Export HTML & CSS</h1>
+  <button id="export">Export</button>
+  <pre id="output"></pre>
+  <script src="ui.js"></script>
+</body>
+
 <script>
+  document.getElementById('export').onclick = () => {
+    parent.postMessage({ pluginMessage: { type: 'generate-html-css' } }, '*');
+  };
 
-document.getElementById('create').onclick = () => {
-  const textbox = document.getElementById('count');
-  const count = parseInt(textbox.value, 10);
-  parent.postMessage({ pluginMessage: { type: 'create-rectangles', count } }, '*')
-}
-
-document.getElementById('cancel').onclick = () => {
-  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-}
-
+  onmessage = (event) => {
+    if (event.data.pluginMessage.type === 'html-css') {
+      document.getElementById('output').textContent = event.data.pluginMessage.content;
+    }
+  };
 </script>
+
+</html>
