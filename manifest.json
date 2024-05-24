@@ -2,7 +2,7 @@
   "name": "Webpress Connector",
   "id": "1375739700601255246",
   "api": "1.0.0",
-  "main": "code.js",
+  "main": "dist/code.js",
   "capabilities": [],
   "enableProposedApi": false,
   "documentAccess": "dynamic-page",

@@ -23,6 +23,7 @@
   };
 
   onmessage = (event) => {
+    console.log('Received message from plugin:', event.data);
     if (event.data.pluginMessage.type === 'html-css') {
       document.getElementById('output').textContent = event.data.pluginMessage.content;
     }
