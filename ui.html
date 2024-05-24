@@ -4,31 +4,59 @@
 <head>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: "Inter", sans-serif;
       padding: 16px;
     }
+
+    .logo {
+      width: 150px;
+    }
+
+    .wrapper {}
   </style>
 </head>
 
 <body>
-  <h1>Webpress Connector</h1>
-  <button id="export">Export</button>
-  <button id="check">Check Component</button>
-  <textarea id="output"></textarea>
+  <section class="wrapper">
+    <img src="https://webpress.id/_next/static/media/webpress_logo.68043666.svg" alt="Webpress Logo" class="logo">
+  </section>
+  <h1>Login</h1>
+  <form action="" id="login-form">
+    <!-- Email input -->
+    <div>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="Email">
+    </div>
+    <!-- Password input -->
+    <div>
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" placeholder="Password">
+    </div>
+    <!-- Submit button -->
+    <button type="submit">Login</button>
+  </form>
   <script src="ui.js"></script>
 </body>
 
 <script>
+  document.getElementById('login-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    parent.postMessage({ pluginMessage: { type: 'login', content: { email, password } } }, '*');
+  });
+
   document.getElementById('export').onclick = () => {
     parent.postMessage({ pluginMessage: { type: 'generate-html-css' } }, '*');
-  };
-  document.getElementById('check').onclick = () => {
-    parent.postMessage({ pluginMessage: { type: 'print-component' } }, '*');
   };
 
   onmessage = (event) => {
     // console.log('Received message from plugin:', event.data);
     if (event.data.pluginMessage.type === 'html-css') {
+      document.getElementById('output').textContent = event.data.pluginMessage.content;
+    }
+
+    if (event.data.pluginMessage.type === 'login-success') {
       document.getElementById('output').textContent = event.data.pluginMessage.content;
     }
   };
