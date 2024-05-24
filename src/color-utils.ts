@@ -7,6 +7,10 @@ export function rgbToHex(color: RGB): string {
   return `#${hex}`;
 }
 
+export function generateColor(color: RGB, opaciy: number): string {
+  return `rgba(${Math.round(color.r * 255)}, ${Math.round(color.g * 255)}, ${Math.round(color.b * 255)}, ${opaciy})`;
+}
+
 export function getColorString(paint: Paint): string {
   if (paint.type === 'SOLID') {
     const color = paint.color;

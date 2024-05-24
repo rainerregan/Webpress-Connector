@@ -14,6 +14,8 @@ figma.ui.onmessage = async msg => {
       const htmlCss = await convertRootNodeToHtmlCss([...rootNodes]);
       figma.ui.postMessage({ type: 'html-css', content: htmlCss });
     } catch (error) {
+      console.log(error);
+      
       const err = error as Error;
       figma.notify(err.message);
       return

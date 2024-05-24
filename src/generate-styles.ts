@@ -1,4 +1,4 @@
-import { getColorString, rgbToHex } from "./color-utils";
+import { generateColor, getColorString, rgbToHex } from "./color-utils";
 
 function getGeneralStyles(node: SceneNode): string {
   if (!node) return ''
@@ -12,6 +12,35 @@ function getGeneralStyles(node: SceneNode): string {
 
   if ('opacity' in node) {
     styles += `opacity: ${String(node.opacity)}; `;
+  }
+
+  // Add border
+  if ('strokes' in node) {
+    const stroke = (node.strokes as Paint[])[0];
+    if (stroke && stroke.type === 'SOLID') {
+      styles += `border: 1px solid ${rgbToHex(stroke.color)}; `;
+    }
+  }
+
+  if ('cornerRadius' in node) {
+    node = node as RectangleNode;
+    styles += `border-radius: ${String(node.cornerRadius)}px; `;
+
+    // If corner radius type is figma.mixed, add border radius for each corner
+    if (node.cornerRadius === figma.mixed) {
+      if (node.topLeftRadius !== undefined) {
+        styles += `border-top-left-radius: ${String(node.topLeftRadius)}px; `;
+      }
+      if (node.topRightRadius !== undefined) {
+        styles += `border-top-right-radius: ${String(node.topRightRadius)}px; `;
+      }
+      if (node.bottomRightRadius !== undefined) {
+        styles += `border-bottom-right-radius: ${String(node.bottomRightRadius)}px; `;
+      }
+      if (node.bottomLeftRadius !== undefined) {
+        styles += `border-bottom-left-radius: ${String(node.bottomLeftRadius)}px; `;
+      }
+    }
   }
 
   // If the layoutSizingHorizontal is HUG, add width of fit content
@@ -68,7 +97,7 @@ function getFillStyles(node: SceneNode): string {
 
     if (fill && fill.type === 'SOLID') {
       const opacity = fill.opacity !== undefined ? fill.opacity : 1;
-      styles += `background-color: ${rgbToHex(fill.color)}; `;
+      styles += `background-color: ${generateColor(fill.color, opacity)}; `;
     }
   } else if ('characters' in node) {
     styles += `color: ${getColorString((node.fills as Paint[])[0])}; `;
@@ -79,10 +108,6 @@ function getFillStyles(node: SceneNode): string {
 
 function getFrameStyles(node: FrameNode): string {
   let styles = '';
-
-  if ('cornerRadius' in node) {
-    styles += `border-radius: ${String(node.cornerRadius)}px; `;
-  }
 
   if ('clipsContent' in node) {
     styles += `overflow: hidden; `;
@@ -192,14 +217,6 @@ function getTextStyles(node: TextNode): string {
 
   return styles;
 }
-
-// const getVectorStyles = async (node: VectorNode): Promise<string> => {
-//   let styles = '';
-//   const svg = await node.exportAsync({ format: 'SVG' });
-//   styles += `background-image: url('data:image/svg+xml,${encodeURIComponent(svg.toString())}'); `;
-
-//   return styles;
-// }
 
 const getGroupStyles = (node: GroupNode): string => {
   let styles = '';

@@ -6,9 +6,11 @@ const convertNodeToHtmlCss = async (node: SceneNode): Promise<string> => {
   const elementId = node.id
   const styles = getComputedStyles(node)
 
+  if(node.visible === false) return '' 
+
   if (node?.type === 'TEXT') {
     const text = ((node as TextNode).characters).trim().replace(/\n/g, '<br>');
-    html += `<p style="${styles}" id="${elementId}">${text}</p>`
+    html += `<span style="${styles}" id="${elementId}">${text}</span>`
   }
 
   if (node.type === 'FRAME') {
@@ -31,6 +33,15 @@ const convertNodeToHtmlCss = async (node: SceneNode): Promise<string> => {
       return await convertNodeToHtmlCss(child)
     }))
     html += `<div style="${styles}" id="${elementId}">${childrenHtml}</div>`
+  }
+
+  // Create if node are component
+  if (node?.type === 'INSTANCE') {
+    // const frameNode = node.createInstance().detachInstance() as FrameNode
+    const clone = node.clone()
+    const detached = clone.detachInstance() as SceneNode
+    const data = await convertNodeToHtmlCss(detached as SceneNode)
+    html += `<div style="${styles}" id="${elementId}">${data}</div>`
   }
 
   // If the node is a vector, add the svg into the html
