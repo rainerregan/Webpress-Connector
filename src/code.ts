@@ -7,27 +7,6 @@ figma.showUI(__html__, {
 });
 
 figma.ui.onmessage = async msg => {
-  // if (msg.type === 'login') {
-  //   try {
-  //     figma.showUI('<iframe src="https://webpress.id" width="100%" height="100%"></iframe>', {
-  //       width: 700,
-  //       height: 600
-  //     })
-  //     // const content = msg.content as { email: string, password: string };
-  //     // if (!content.email || !content.password) throw new Error('Please enter email and password');
-  //     // const loginResponse = await login(content.email, content.password);
-  //     // console.log(loginResponse);
-      
-  //     // figma.ui.postMessage({ type: 'login-success', content: loginResponse });
-  //   } catch (error) {
-  //     console.log(error);
-
-  //     const err = error as Error;
-  //     figma.notify(err.message);
-  //     return
-  //   }
-  // }
-
   if (msg.type === 'generate-html-css') {
     try {
       const rootNodes = figma.currentPage.selection;

@@ -21,30 +21,29 @@
     <img src="https://webpress.id/_next/static/media/webpress_logo.68043666.svg" alt="Webpress Logo" class="logo">
   </section>
   <h1>Login</h1>
-  <form action="" id="login-form">
-    <!-- Email input -->
+  <!-- <form action="" id="login-form">
     <div>
       <label for="email">Email</label>
       <input type="email" id="email" name="email" placeholder="Email">
     </div>
-    <!-- Password input -->
     <div>
       <label for="password">Password</label>
       <input type="password" id="password" name="password" placeholder="Password">
     </div>
-    <!-- Submit button -->
     <button type="submit">Login</button>
-  </form>
+  </form> -->
+  <button id="export">Export</button>
+  <textarea name="" id="output"></textarea>
   <script src="ui.js"></script>
 </body>
 
 <script>
-  document.getElementById('login-form').addEventListener('submit', (event) => {
-    event.preventDefault();
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    parent.postMessage({ pluginMessage: { type: 'login', content: { email, password } } }, '*');
-  });
+  // document.getElementById('login-form').addEventListener('submit', (event) => {
+  //   event.preventDefault();
+  //   const email = document.getElementById('email').value;
+  //   const password = document.getElementById('password').value;
+  //   parent.postMessage({ pluginMessage: { type: 'login', content: { email, password } } }, '*');
+  // });
 
   document.getElementById('export').onclick = () => {
     parent.postMessage({ pluginMessage: { type: 'generate-html-css' } }, '*');
