@@ -16,8 +16,9 @@ const convertNodeToHtmlCss = async (node: SceneNode): Promise<string> => {
 
       const segmentStyle = getTextStyles(segment);
 
-      textSegmented += `<span style="${segmentStyle}" id="${elementId}">${text}</span>`
+      textSegmented += `<span style="${segmentStyle};min-width: fit-content; margin-right: 4px;" id="${elementId}">${text}</span>`
     })
+    textSegmented = `<p style="${'textAlignHorizontal' in node ? `text-align:${node.textAlignHorizontal}` : ''}; margin: 0">${textSegmented}</p>`
     html += textSegmented
   }
 

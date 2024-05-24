@@ -217,7 +217,9 @@ export function getTextStyles(node: Partial<TextNode>): string {
     // Add color if the fill is not figma.mixed
     const fills = node.fills as Paint[]
     const fill = fills[0];
-    if(fill) styles += `color: ${getColorString(fills[0])}; `;
+    if (fill) {
+      styles += `color: ${getColorString(fills[0])}; `;
+    }
   }
 
   return styles;
