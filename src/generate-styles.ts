@@ -83,6 +83,16 @@ function getTextStyles(node: TextNode): string {
     styles += `color: ${getColorString((node.fills as Paint[])[0])}; `;
   }
 
+  // Add font weight
+  if ('fontWeight' in node) {
+    styles += `font-weight: ${String(node.fontWeight)}; `;
+  }
+
+  // Add line height
+  if ('lineHeight' in node) {
+    styles += `line-height: ${String(node.lineHeight)}px; `;
+  }
+
   return styles;
 }
 
