@@ -99,8 +99,6 @@ function getFillStyles(node: SceneNode): string {
       const opacity = fill.opacity !== undefined ? fill.opacity : 1;
       styles += `background-color: ${generateColor(fill.color, opacity)}; `;
     }
-  } else if ('characters' in node) {
-    styles += `color: ${getColorString((node.fills as Paint[])[0])}; `;
   }
 
   return styles;
@@ -193,7 +191,7 @@ function getFrameStyles(node: FrameNode): string {
   return styles;
 }
 
-function getTextStyles(node: TextNode): string {
+export function getTextStyles(node: Partial<TextNode>): string {
   let styles = '';
 
   if ('fontSize' in node) {
@@ -213,6 +211,13 @@ function getTextStyles(node: TextNode): string {
   // Add line height
   if ('lineHeight' in node) {
     styles += `line-height: ${String(node.lineHeight)}px; `;
+  }
+
+  if ('characters' in node) {
+    // Add color if the fill is not figma.mixed
+    const fills = node.fills as Paint[]
+    const fill = fills[0];
+    if(fill) styles += `color: ${getColorString(fills[0])}; `;
   }
 
   return styles;

@@ -1,4 +1,4 @@
-import { getComputedStyles } from "./generate-styles";
+import { getComputedStyles, getTextStyles } from "./generate-styles";
 
 const convertNodeToHtmlCss = async (node: SceneNode): Promise<string> => {
   if (!node) return ''
@@ -6,11 +6,19 @@ const convertNodeToHtmlCss = async (node: SceneNode): Promise<string> => {
   const elementId = node.id
   const styles = getComputedStyles(node)
 
-  if(node.visible === false) return '' 
+  if (node.visible === false) return ''
 
   if (node?.type === 'TEXT') {
-    const text = ((node as TextNode).characters).trim().replace(/\n/g, '<br>');
-    html += `<span style="${styles}" id="${elementId}">${text}</span>`
+    let textSegmented = ''
+    const segments = node.getStyledTextSegments(['fontName', 'fills', 'fontSize', 'fontWeight', 'textCase', 'textDecoration', 'letterSpacing', 'lineHeight']);
+    segments.forEach(segment => {
+      const text = (segment.characters).trim().replace(/\n/g, '<br>');
+
+      const segmentStyle = getTextStyles(segment);
+
+      textSegmented += `<span style="${segmentStyle}" id="${elementId}">${text}</span>`
+    })
+    html += textSegmented
   }
 
   if (node.type === 'FRAME') {
