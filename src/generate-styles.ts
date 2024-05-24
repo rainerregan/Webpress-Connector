@@ -1,16 +1,33 @@
 import { getColorString, rgbToHex } from "./color-utils";
 
 function getGeneralStyles(node: SceneNode): string {
+  if (!node) return ''
+
   let styles = '';
+
+  // Add color
+  if ('fills' in node) {
+    styles += getFillStyles(node);
+  }
 
   if ('opacity' in node) {
     styles += `opacity: ${String(node.opacity)}; `;
   }
+  
+  if ('height' in node) {
+    styles += `height: ${String(node.height)}px; `;
+  }
+
+  if ('width' in node) {
+    styles += `width: ${String(node.width)}px; `;
+  }
 
   //  If parent is not null, Add absolute position if parent is a frame and is not on layoutMode
-  if (node.parent !== null) {
+  if (node.parent !== null && node.parent.type === 'FRAME') {
     const parent = node.parent as FrameNode;
-    if (parent.type === 'FRAME' && parent.layoutMode === 'NONE') {
+    
+    // Add absolute position if parent is a frame and is not on layoutMode
+    if (parent.layoutMode === 'NONE') {
       styles += `position: absolute; `;
 
       // Add top and left position if parent is not on layoutMode
@@ -26,31 +43,99 @@ function getGeneralStyles(node: SceneNode): string {
   return styles;
 }
 
-function getFrameStyles(node: FrameNode): string {
+function getFillStyles(node: SceneNode): string {
   let styles = '';
 
-  if ('fills' in node) {
+  // If the node type is rectangle and frame, add background color, if the node type is text, add color
+  if (node.type === 'RECTANGLE' || node.type === 'FRAME') {
     const fill = (node.fills as Paint[])[0];
-    if (fill.type === 'SOLID') {
+
+    if (fill && fill.type === 'SOLID') {
       const opacity = fill.opacity !== undefined ? fill.opacity : 1;
       styles += `background-color: ${rgbToHex(fill.color)}; `;
     }
+  } else if ('characters' in node) {
+    styles += `color: ${getColorString((node.fills as Paint[])[0])}; `;
   }
+
+  return styles;
+}
+
+function getFrameStyles(node: FrameNode): string {
+  let styles = '';
 
   if ('cornerRadius' in node) {
     styles += `border-radius: ${String(node.cornerRadius)}px; `;
   }
 
-  if ('height' in node) {
-    styles += `height: ${String(node.height)}px; `;
-  }
-
-  if ('width' in node) {
-    styles += `width: ${String(node.width)}px; `;
-  }
-
   if ('clipsContent' in node) {
     styles += `overflow: hidden; `;
+  }
+  // If the layout node is none, add relative position
+  if ('layoutMode' in node && node.layoutMode === 'NONE') {
+    styles += `position: relative; `;
+  }
+
+  // If node is a frame and is on layoutMode, and inferredAutoLayout is true, add flex, and the alignments
+  if (node.layoutMode !== 'NONE') {
+    styles += `display: flex; `;
+
+    // Add gap
+    if (node.inferredAutoLayout?.itemSpacing !== undefined) {
+      styles += `gap: ${String(node.itemSpacing)}px; `;
+    }
+
+    // Add Paddings
+    if (node.paddingTop !== undefined) {
+      styles += `padding-top: ${String(node.paddingTop)}px; `;
+    }
+    if (node.paddingRight !== undefined) {
+      styles += `padding-right: ${String(node.paddingRight)}px; `;
+    }
+    if (node.paddingBottom !== undefined) {
+      styles += `padding-bottom: ${String(node.paddingBottom)}px; `;
+    }
+    if (node.paddingLeft !== undefined) {
+      styles += `padding-left: ${String(node.paddingLeft)}px; `;
+    }
+
+    // Add flex direction
+    if (node.layoutMode === 'HORIZONTAL') {
+      styles += `flex-direction: row; `;
+    } else if (node.layoutMode === 'VERTICAL') {
+      styles += `flex-direction: column; `;
+    }
+
+    // Add alignments using switch case
+    switch (node.primaryAxisAlignItems) {
+      case 'MIN':
+        styles += `justify-content: flex-start; `;
+        break;
+      case 'CENTER':
+        styles += `justify-content: center; `;
+        break;
+      case 'MAX':
+        styles += `justify-content: flex-end; `;
+        break;
+      case 'SPACE_BETWEEN':
+        styles += `justify-content: space-between; `;
+    }
+
+    // Add alignments using switch case
+    switch (node.counterAxisAlignItems) {
+      case 'MIN':
+        styles += `align-items: flex-start; `;
+        break;
+      case 'CENTER':
+        styles += `align-items: center; `;
+        break;
+      case 'MAX':
+        styles += `align-items: flex-end; `;
+        break;
+      case "BASELINE":
+        styles += `align-items: baseline; `;
+        break;
+    }
   }
 
   if ('layoutMode' in node) {
@@ -79,10 +164,6 @@ function getTextStyles(node: TextNode): string {
     styles += `font-family: ${fontName.family}; `;
   }
 
-  if ('characters' in node) {
-    styles += `color: ${getColorString((node.fills as Paint[])[0])}; `;
-  }
-
   // Add font weight
   if ('fontWeight' in node) {
     styles += `font-weight: ${String(node.fontWeight)}; `;
@@ -96,9 +177,37 @@ function getTextStyles(node: TextNode): string {
   return styles;
 }
 
-export function getComputedStyles(node: SceneNode): string {
+// const getVectorStyles = async (node: VectorNode): Promise<string> => {
+//   let styles = '';
+//   const svg = await node.exportAsync({ format: 'SVG' });
+//   styles += `background-image: url('data:image/svg+xml,${encodeURIComponent(svg.toString())}'); `;
+
+//   return styles;
+// }
+
+const getGroupStyles = (node: GroupNode): string => {
   let styles = '';
 
+  // Add position relative to the node
+  styles += `position: relative; `;
+
+  // For each child, add position absolute, and add top and left position
+  node.children.forEach(child => {
+    styles += `#${child.id} { position: absolute; top: ${child.y}px; left: ${child.x}px; } `;
+  });
+
+  return styles;
+}
+
+export function getComputedStyles(node: SceneNode): string {
+
+  let styles = '';
+  if (node.type === undefined) return ''
+
+  // TODO: General Styles
+  styles += getGeneralStyles(node);
+
+  console.log("Node Style", node.type);
   // Specific Styles
   switch (node.type) {
     case 'TEXT':
@@ -107,10 +216,10 @@ export function getComputedStyles(node: SceneNode): string {
     case 'FRAME':
       styles += getFrameStyles(node as FrameNode);
       break;
+    case 'GROUP':
+      styles += getGroupStyles(node as GroupNode);
+      break;
   }
-
-  // TODO: General Styles
-  styles += getGeneralStyles(node);
 
   // TODO: Add more style conversions as needed
 
