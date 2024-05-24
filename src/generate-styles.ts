@@ -13,19 +13,35 @@ function getGeneralStyles(node: SceneNode): string {
   if ('opacity' in node) {
     styles += `opacity: ${String(node.opacity)}; `;
   }
-  
-  if ('height' in node) {
-    styles += `height: ${String(node.height)}px; `;
+
+  // If the layoutSizingHorizontal is HUG, add width of fit content
+  if ('layoutSizingHorizontal' in node && node.layoutSizingHorizontal === 'HUG') {
+    styles += `width: fit-content; `;
+  } else if ('layoutSizingHorizontal' in node && node.layoutSizingHorizontal === 'FIXED') {
+    if ('width' in node) {
+      styles += `width: ${String(node.width)}px; `;
+    }
+  } else if ('layoutSizingHorizontal' in node && node.layoutSizingHorizontal === 'FILL') {
+    // Add width of 100% if the layoutSizingHorizontal is FILL
+    styles += `width: 100%; `;
   }
 
-  if ('width' in node) {
-    styles += `width: ${String(node.width)}px; `;
+  // If the layoutSizingVertical is HUG, add height of fit content
+  if ('layoutSizingVertical' in node && node.layoutSizingVertical === 'HUG') {
+    styles += `height: fit-content; `;
+  } else if ('layoutSizingVertical' in node && node.layoutSizingVertical === 'FIXED') {
+    if ('height' in node) {
+      styles += `height: ${String(node.height)}px; `;
+    }
+  } else if ('layoutSizingVertical' in node && node.layoutSizingVertical === 'FILL') {
+    // Add height of 100% if the layoutSizingVertical is FILL
+    styles += `height: 100%; `;
   }
 
   //  If parent is not null, Add absolute position if parent is a frame and is not on layoutMode
   if (node.parent !== null && node.parent.type === 'FRAME') {
     const parent = node.parent as FrameNode;
-    
+
     // Add absolute position if parent is a frame and is not on layoutMode
     if (parent.layoutMode === 'NONE') {
       styles += `position: absolute; `;
