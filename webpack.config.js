@@ -34,15 +34,21 @@ module.exports = (env, argv) => ({
         test: /.svg$/,
         use: '@svgr/webpack',
       },
+
+      // Allows you to use "<%= require('./file.svg') %>" in your HTML code to get a data URI
+      { test: /\.(png|jpg|gif|webp|zip)$/, use: ['url-loader'] },
+
+      { test: /\.svg$/, use: ['svg-inline-loader'] }
     ],
   },
   // Webpack tries these extensions for you if you omit the extension like "import './file'"
   resolve: {
-    extensions: ['.ts', '.js'],
+    extensions: ['.ts', '.js', '.tsx', '.jsx', '.json', '.css', '.sass'],
   },
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
+    publicPath: '/'
   },
   plugins: [
     new Dotenv(),
