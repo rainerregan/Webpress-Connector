@@ -87,7 +87,7 @@ const App = () => {
 
   return (
     <div className='p-4'>
-      <section className="logo">
+      <section className="logo mb-4">
         <img src="https://webpress.id/_next/static/media/webpress_logo.68043666.svg" alt="Webpress Logo" className="w-[150px]" />
       </section>
       <section className="content">

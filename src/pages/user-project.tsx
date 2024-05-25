@@ -23,6 +23,14 @@ const UserProject: React.FC<ComponentProps> = (props) => {
     <div>
       <h1>Projects</h1>
       <p>Daftar proyek yang tersedia</p>
+      <div className='py-4'>
+        {props.userProjectList?.map((project, index) => (
+          <div>
+            <h3>{project.name}</h3>
+            <p>{project.id}</p>
+          </div>
+        ))}
+      </div>
       <button onClick={logout}>Logout</button>
     </div>
   )
