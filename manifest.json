@@ -10,14 +10,14 @@
     "figma"
   ],
   "ui": "ui.html",
+  "permissions": ["currentuser"],
   "networkAccess": {
     "allowedDomains": [
       "https://webpress.id",
       "https://fonts.googleapis.com",
-      "https://fonts.gstatic.com"
-    ],
-    "devAllowedDomains": [
+      "https://fonts.gstatic.com",
       "http://localhost:3004"
-    ]
+    ],
+    "reasoning": "Neede for passing data to our backend"
   }
 }
