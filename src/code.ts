@@ -44,7 +44,7 @@ figma.ui.onmessage = async msg => {
 
   }
 
-  if (msg.type === 'get-user-projects') {
+  if (msg.type === 'connect-plugin') {
     try {
       const content = msg.content as { email: string, password: string };
       const figmaUser = figma.currentUser;
@@ -53,13 +53,43 @@ figma.ui.onmessage = async msg => {
 
       const response = await registerPlugin(content.email, content.password, figmaUser);
       const result = await response.json();
-      console.log(result);
+      if (!result) throw new Error('Failed to connect plugin');
 
-      figma.ui.postMessage({ type: 'project-updated', content: result });
+      // Save user id to the client storage
+      await figma.clientStorage.setAsync('userId', result.userId);
+
+      figma.ui.postMessage({ type: 'plugin-connected', content: result });
     } catch (error) {
 
       const err = error as Error;
       console.log(err.message);
+      figma.notify(err.message);
+      return
+    }
+  }
+
+  if (msg.type === 'get-saved-user') {
+    try {
+      const userId = await figma.clientStorage.getAsync('userId');
+      console.log(userId);
+
+      figma.ui.postMessage({ type: 'saved-user', content: userId });
+    } catch (error) {
+      console.log(error);
+      const err = error as Error;
+      figma.notify(err.message);
+      return
+    }
+  }
+
+  // Handle Logout
+  if (msg.type === 'logout') {
+    try {
+      await figma.clientStorage.setAsync('userId', null);
+      figma.ui.postMessage({ type: 'logout-success' });
+    } catch (error) {
+      console.log(error);
+      const err = error as Error;
       figma.notify(err.message);
       return
     }

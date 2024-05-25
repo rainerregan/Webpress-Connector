@@ -7,7 +7,8 @@
     "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
     "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix .",
     "build": "webpack --mode production",
-    "watch": "webpack --mode development --watch"
+    "watch": "webpack --mode development --progress --watch",
+    "dev": "webpack-dev-server --config ./webpack.config.js --hot"
   },
   "author": "",
   "license": "",
@@ -63,10 +64,12 @@
     }
   },
   "dependencies": {
+    "antd": "^5.17.3",
     "axios": "^1.7.2",
     "lodash.clonedeep": "^4.5.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-figma": "latest"
+    "react-figma": "latest",
+    "react-hook-form": "^7.51.5"
   }
 }
