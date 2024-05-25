@@ -28,24 +28,28 @@ export interface ComponentProps {
 }
 
 const App = () => {
-  const [loggedUser, setLoggedUser] = useState<User | null>(null)
-  const [userProjectList, setUserProjectList] = useState<UserProjectMetadata[] | null>(null)
-  const [pageSelection, setPageSelection] = useState<PageSelection>(PageSelection.LOGIN)
+  const [loggedUser, setLoggedUser] = useState<User | null>(null) // Set state untuk logged user current
+  const [userProjectList, setUserProjectList] = useState<UserProjectMetadata[] | null>(null) // Set state untuk list project user
+  const [pageSelection, setPageSelection] = useState<PageSelection>(PageSelection.LOGIN) // Current page
 
+  // Request data user yang telah tersimpan.
   const getSavedUser = async () => {
     parent.postMessage({ pluginMessage: { type: 'get-saved-user' } }, '*');
   }
 
   useEffect(() => {
+    // Jika userProjectList ada, maka set page selection ke projects
     if (userProjectList) setPageSelection(PageSelection.PROJECTS)
   }, [userProjectList])
 
   useEffect(() => {
+    // Get saved user ketika pertama kali render
     getSavedUser()
 
     window.onmessage = (event) => {
       const { type, content } = event.data.pluginMessage;
 
+      // Jika plugin controller mengirimkan pesan bahwa plugin terhubung, maka set logged user dan user project list
       if (type === 'saved-user') {
         const { userId, projects } = content;
         if (userId) setLoggedUser({ userId })
@@ -54,15 +58,17 @@ const App = () => {
     };
   }, [])
 
-
   useEffect(() => {
     if (!loggedUser) {
+      // Jika logged user tidak ada, maka set page selection ke login
       setPageSelection(PageSelection.LOGIN)
     } else {
+      // Jika logged user ada, maka set page selection ke projects
       setPageSelection(PageSelection.PROJECTS)
     }
   }, [loggedUser])
 
+  // Fungsi untuk menampilkan content page
   const getPageContent = () => {
     switch (pageSelection) {
       case PageSelection.LOGIN:

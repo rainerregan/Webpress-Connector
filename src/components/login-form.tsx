@@ -12,21 +12,18 @@ const LoginForm: React.FC<ComponentProps> = (props) => {
   const { register, handleSubmit, formState: { errors } } = useForm<IFormInput>()
 
   const onSubmit = (data: any) => {
+    // On Submit form, send the data to the plugin controller, to connect the plugin with backend
     const { email, password } = data
-    console.log(data);
-
     parent.postMessage({ pluginMessage: { type: 'connect-plugin', content: { email, password } } }, '*');
   }
 
   useEffect(() => {
-    // This is how we read messages sent from the plugin controller
     window.onmessage = (event) => {
       const { type, content } = event.data.pluginMessage;
 
+      // If the plugin controller sends a message that the plugin is connected, then set the logged user and user project list
       if (type === 'plugin-connected') {
         const { userId, projects } = content;
-        console.log("plugin-connected", content);
-
         if (userId) props.setLoggedUser({ userId })
         if (projects) props.setUserProjectList(projects)
       }

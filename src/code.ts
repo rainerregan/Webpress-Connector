@@ -1,5 +1,5 @@
 import { convertRootNodeToHtmlCss } from "./create-html";
-import { getUserProjects, login, registerPlugin } from "./services/auth.service";
+import { getUserProjects, registerPlugin } from "./services/auth.service";
 
 figma.showUI(__html__, {
   height: 400,
@@ -7,23 +7,6 @@ figma.showUI(__html__, {
 });
 
 figma.ui.onmessage = async msg => {
-  if (msg.type === 'login') {
-    try {
-      const content = msg.content as { email: string, password: string };
-      if (!content.email || !content.password) throw new Error('Please enter email and password');
-      const loginResponse = await login(content.email, content.password);
-      console.log(loginResponse);
-
-      figma.ui.postMessage({ type: 'login-success', content: loginResponse });
-    } catch (error) {
-      console.log(error);
-
-      const err = error as Error;
-      figma.notify(err.message);
-      return
-    }
-  }
-
   if (msg.type === 'generate-html-css') {
     try {
       const rootNodes = figma.currentPage.selection;
@@ -68,6 +51,7 @@ figma.ui.onmessage = async msg => {
     }
   }
 
+  // Get saved user from the client storage
   if (msg.type === 'get-saved-user') {
     try {
       const userId = await figma.clientStorage.getAsync('userId');
@@ -75,12 +59,13 @@ figma.ui.onmessage = async msg => {
       if (!userId) throw new Error('User not found');
       if (!figmaUser) throw new Error('Please login to figma');
 
+      // After getting the user id, get the user projects from backend
       const response = await getUserProjects(userId, figmaUser);
       const result = await response.json();
       if (!result) throw new Error('Failed to get user projects');
 
+      // Send the user id and projects to the UI
       const data = { userId, projects: result };
-
       figma.ui.postMessage({ type: 'saved-user', content: data });
     } catch (error) {
       console.log(error);
@@ -90,7 +75,7 @@ figma.ui.onmessage = async msg => {
     }
   }
 
-  // Handle Logout
+  // Handle Logout, remove the user id from the client storage
   if (msg.type === 'logout') {
     try {
       await figma.clientStorage.setAsync('userId', null);

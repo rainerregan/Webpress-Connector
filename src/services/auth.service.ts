@@ -1,18 +1,4 @@
-
-export const login = async (email: string, password: string) => {
-  if (!email || !password) throw new Error('Please enter email and password');
-  const API_URL = process.env.API_URL;
-
-  const response = await fetch(`${API_URL}/auth/login`, {
-    method: 'POST',
-    body: JSON.stringify({ email, password }),
-    headers: {
-      "Access-Control-Allow-Origin": "true",
-    }
-  })
-  return response;
-}
-
+// Register plugin pertama kali
 export const registerPlugin = async (email: string, password: string, figmaUser: User) => {
   if (!email || !password) throw new Error('Please enter email and password');
   if (!figmaUser) throw new Error('Please login to figma');
@@ -31,8 +17,9 @@ export const registerPlugin = async (email: string, password: string, figmaUser:
   return response;
 }
 
+// Get user projects menggunakan user id yang telah tersimpan
 export const getUserProjects = async (userId: string, figmaUser: User) => {
-  if (!userId) throw new Error('Please enter email and password');
+  if (!userId) throw new Error('User is undefined');
   if (!figmaUser) throw new Error('Please login to figma');
   const API_URL = process.env.API_URL;
   const bodyData = JSON.stringify({
