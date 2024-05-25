@@ -1,5 +1,5 @@
 import { convertRootNodeToHtmlCss } from "./create-html";
-import { login, registerPlugin } from "./services/auth.service";
+import { getUserProjects, login, registerPlugin } from "./services/auth.service";
 
 figma.showUI(__html__, {
   height: 400,
@@ -71,9 +71,17 @@ figma.ui.onmessage = async msg => {
   if (msg.type === 'get-saved-user') {
     try {
       const userId = await figma.clientStorage.getAsync('userId');
-      console.log(userId);
+      const figmaUser = figma.currentUser;
+      if (!userId) throw new Error('User not found');
+      if (!figmaUser) throw new Error('Please login to figma');
 
-      figma.ui.postMessage({ type: 'saved-user', content: userId });
+      const response = await getUserProjects(userId, figmaUser);
+      const result = await response.json();
+      if (!result) throw new Error('Failed to get user projects');
+
+      const data = { userId, projects: result };
+
+      figma.ui.postMessage({ type: 'saved-user', content: data });
     } catch (error) {
       console.log(error);
       const err = error as Error;

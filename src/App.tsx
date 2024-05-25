@@ -47,8 +47,9 @@ const App = () => {
       const { type, content } = event.data.pluginMessage;
 
       if (type === 'saved-user') {
-        const userId = content;
+        const { userId, projects } = content;
         if (userId) setLoggedUser({ userId })
+        if (projects) setUserProjectList(projects)
       }
     };
   }, [])
