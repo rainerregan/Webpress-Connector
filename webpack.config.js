@@ -23,12 +23,9 @@ module.exports = (env, argv) => ({
         exclude: /node_modules/,
       },
       {
-        test: /\.sass$/,
-        use: [
-          'style-loader',
-          'css-loader',
-          'sass-loader',
-        ],
+        test: /\.css$/i,
+        include: path.resolve(__dirname, 'src'),
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
       {
         test: /.svg$/,
@@ -42,7 +39,7 @@ module.exports = (env, argv) => ({
     ],
   },
   resolve: {
-    extensions: [".figma.tsx",".figma.ts",".figma.jsx",".figma.js",".tsx",".ts",".jsx",".js", ".css"]
+    extensions: [".figma.tsx", ".figma.ts", ".figma.jsx", ".figma.js", ".tsx", ".ts", ".jsx", ".js", ".css"]
   },
   output: {
     filename: '[name].js',
