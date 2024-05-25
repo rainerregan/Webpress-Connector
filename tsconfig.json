@@ -19,6 +19,7 @@
   },
   "include": [
     "src/**/*.ts",
-    "./typings-custom/**/*.ts"
+    "src/**/*.tsx",
+    "./typings-custom/**/*.ts",
   ]
 }

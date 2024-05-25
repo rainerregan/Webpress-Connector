@@ -41,9 +41,8 @@ module.exports = (env, argv) => ({
       { test: /\.svg$/, use: ['svg-inline-loader'] }
     ],
   },
-  // Webpack tries these extensions for you if you omit the extension like "import './file'"
   resolve: {
-    extensions: ['.ts', '.js', '.tsx', '.jsx', '.json', '.css', '.sass'],
+    extensions: [".figma.tsx",".figma.ts",".figma.jsx",".figma.js",".tsx",".ts",".jsx",".js", ".css"]
   },
   output: {
     filename: '[name].js',
@@ -55,7 +54,7 @@ module.exports = (env, argv) => ({
     new HtmlWebpackPlugin({
       template: './src/ui.html',
       filename: 'ui.html',
-      inlineSource: '.(js)$',
+      inlineSource: 'ui.js',
       chunks: ['ui'],
     }),
     new HtmlWebpackInlineSourcePlugin(HtmlWebpackPlugin),
