@@ -45,7 +45,7 @@ const UserProject: React.FC<ComponentProps> = (props) => {
       if (!responseJSON) throw new Error('Failed to update project data')
 
       // Update is success
-      // TODO: Redirect page to success.
+      props.setExportedProjectId && props.setExportedProjectId(selectedProject.id)
       props.setPageSelection(PageSelection.DONE)
     } catch (error) {
       const err = error as Error;

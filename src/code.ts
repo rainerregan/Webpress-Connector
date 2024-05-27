@@ -90,4 +90,18 @@ figma.ui.onmessage = async msg => {
       return
     }
   }
+
+  // Open project on web
+  if (msg.type === 'open-project-web') {
+    const { projectId } = msg.content;
+    if (!projectId) {
+      figma.notify('Project not found');
+      return
+    }
+    const WEB_APP_URL = process.env.WEB_APP_URL ?? "https://localhost:3000";
+
+    const url = `${WEB_APP_URL}/editor/${projectId}`;
+    figma.notify(`Opening project on web...`);
+    figma.openExternal(url);
+  }
 };

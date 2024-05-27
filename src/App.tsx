@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import LoginForm from './components/login-form'
 import './index.css'
 import UserProject from './pages/user-project'
+import DonePage from './pages/done-page'
 
 export enum PageSelection {
   LOGIN,
@@ -16,7 +17,8 @@ export interface ComponentProps {
   currentFigmaUser?: User | undefined,
   setPageSelection: React.Dispatch<React.SetStateAction<PageSelection>>,
   setUserProjectList: React.Dispatch<React.SetStateAction<UserProjectMetadata[] | null>>
-  setLoggedUser: React.Dispatch<React.SetStateAction<UserData | null>>
+  setLoggedUser: React.Dispatch<React.SetStateAction<UserData | null>>,
+  setExportedProjectId?: React.Dispatch<React.SetStateAction<string | undefined>>
 }
 
 const App = () => {
@@ -24,6 +26,7 @@ const App = () => {
   const [loggedUser, setLoggedUser] = useState<UserData | null>(null) // Set state untuk logged user current
   const [userProjectList, setUserProjectList] = useState<UserProjectMetadata[] | null>(null) // Set state untuk list project user
   const [pageSelection, setPageSelection] = useState<PageSelection>(PageSelection.LOGIN) // Current page
+  const [exportedProjectId, setExportedProjectId] = useState<string | undefined>()
 
   // Request data user yang telah tersimpan.
   const getSavedUser = async () => {
@@ -82,9 +85,12 @@ const App = () => {
           pageSelection={pageSelection}
           setUserProjectList={setUserProjectList}
           userProjectList={userProjectList}
+          setExportedProjectId={setExportedProjectId}
         />
       case PageSelection.DONE:
-        return <div>Done</div>
+        return exportedProjectId ? <DonePage
+          projectId={exportedProjectId}
+        /> : "Terjadi kesalahan"
     }
   }
 
