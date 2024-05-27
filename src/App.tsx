@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import './index.css'
 import LoginForm from './components/login-form'
-import { set } from 'lodash'
+import './index.css'
 import UserProject from './pages/user-project'
 
 enum PageSelection {
@@ -10,25 +9,16 @@ enum PageSelection {
   DONE
 }
 
-interface UserProjectMetadata {
-  name: string,
-  id: string
-}
-
-interface User {
-  userId: string,
-}
-
 export interface ComponentProps {
   setPageSelection: React.Dispatch<React.SetStateAction<PageSelection>>,
   pageSelection: PageSelection,
   setUserProjectList: React.Dispatch<React.SetStateAction<UserProjectMetadata[] | null>>
   userProjectList: UserProjectMetadata[] | null,
-  setLoggedUser: React.Dispatch<React.SetStateAction<User | null>>
+  setLoggedUser: React.Dispatch<React.SetStateAction<UserData | null>>
 }
 
 const App = () => {
-  const [loggedUser, setLoggedUser] = useState<User | null>(null) // Set state untuk logged user current
+  const [loggedUser, setLoggedUser] = useState<UserData | null>(null) // Set state untuk logged user current
   const [userProjectList, setUserProjectList] = useState<UserProjectMetadata[] | null>(null) // Set state untuk list project user
   const [pageSelection, setPageSelection] = useState<PageSelection>(PageSelection.LOGIN) // Current page
 

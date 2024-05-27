@@ -1,10 +1,22 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ComponentProps } from '../App'
+import Button, { ButtonType } from '../components/button';
+import ProjectCard from '../components/project-card';
 
 const UserProject: React.FC<ComponentProps> = (props) => {
+  const [selectedProject, setSelectedProject] = useState<UserProjectMetadata | undefined>()
 
   const logout = () => {
     parent.postMessage({ pluginMessage: { type: 'logout' } }, '*');
+  }
+
+  const handleSelect = (project: UserProjectMetadata) => {
+    setSelectedProject(project)
+  }
+
+  const handleExport = () => {
+    if (!selectedProject) return
+
   }
 
   useEffect(() => {
@@ -25,14 +37,22 @@ const UserProject: React.FC<ComponentProps> = (props) => {
       <p>Daftar proyek yang tersedia</p>
       <div className='py-4'>
         {props.userProjectList?.map((project, index) => (
-          <div>
-            <h3>{project.name}</h3>
-            <p>{project.id}</p>
-          </div>
+          <ProjectCard
+            key={index}
+            project={project}
+            handleSelect={handleSelect}
+            selected={selectedProject?.id === project.id}
+          />
         ))}
       </div>
-      <button>Import ke Project</button>
-      <button onClick={logout}>Logout</button>
+      <div className='flex flex-col gap-2'>
+        <Button onClick={handleExport} disabled={!selectedProject}>
+          Export Project
+        </Button>
+        <Button onClick={logout} buttonType={ButtonType.SECONDARY}>
+          Log Out
+        </Button>
+      </div>
     </div>
   )
 }
