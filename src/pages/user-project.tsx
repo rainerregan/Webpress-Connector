@@ -83,8 +83,10 @@ const UserProject: React.FC<ComponentProps> = (props) => {
 
   return (
     <div>
-      <h1>Projects</h1>
-      <p>Daftar proyek yang tersedia</p>
+      <div>
+        <h1 className='text-2xl font-semibold'>Projects</h1>
+        <p className='text-xs text-gray-400'>Pilih project web yang ingin anda hubungkan.</p>
+      </div>
       <div className='py-4'>
         {props.userProjectList?.map((project, index) => (
           <ProjectCard
