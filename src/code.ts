@@ -12,16 +12,19 @@ figma.ui.onmessage = async msg => {
       const rootNodes = figma.currentPage.selection;
       console.log("Exported Node", rootNodes);
 
+      if (!figma.currentUser) throw new Error('Please login to figma');
       if (rootNodes.length === 0) throw new Error('Please select a frame to export.');
       if (rootNodes.length > 1) throw new Error('Please select a frame one at a time.');
 
       const htmlCss = await convertRootNodeToHtmlCss([...rootNodes]);
-      figma.ui.postMessage({ type: 'html-css', content: htmlCss });
+      figma.ui.postMessage({
+        type: 'html-css',
+        content: htmlCss
+      });
     } catch (error) {
-      console.log(error);
-
       const err = error as Error;
-      figma.notify(err.message);
+      figma.notify(err.message ?? "Terjadi kesalahan dalam mengexport project, mohon cek frame anda");
+      figma.ui.postMessage({ type: 'html-css', content: null });
       return
     }
 
@@ -65,7 +68,7 @@ figma.ui.onmessage = async msg => {
       if (!result) throw new Error('Failed to get user projects');
 
       // Send the user id and projects to the UI
-      const data = { userId, projects: result };
+      const data = { userId, projects: result, figmaUser };
       figma.ui.postMessage({ type: 'saved-user', content: data });
     } catch (error) {
       console.log(error);

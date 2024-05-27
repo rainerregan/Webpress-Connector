@@ -24,6 +24,7 @@ export const getUserProjects = async (userId: string, figmaUser: User) => {
   const API_URL = process.env.API_URL;
   const bodyData = JSON.stringify({
     user_id: userId,
+    figma_id: figmaUser.id
   });
 
   const response = await fetch(`${API_URL}/plugin/get-projects`, {

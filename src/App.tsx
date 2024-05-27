@@ -3,21 +3,24 @@ import LoginForm from './components/login-form'
 import './index.css'
 import UserProject from './pages/user-project'
 
-enum PageSelection {
+export enum PageSelection {
   LOGIN,
   PROJECTS,
   DONE
 }
 
 export interface ComponentProps {
-  setPageSelection: React.Dispatch<React.SetStateAction<PageSelection>>,
-  pageSelection: PageSelection,
-  setUserProjectList: React.Dispatch<React.SetStateAction<UserProjectMetadata[] | null>>
   userProjectList: UserProjectMetadata[] | null,
+  pageSelection: PageSelection,
+  loggedUser?: UserData | null,
+  currentFigmaUser?: User | undefined,
+  setPageSelection: React.Dispatch<React.SetStateAction<PageSelection>>,
+  setUserProjectList: React.Dispatch<React.SetStateAction<UserProjectMetadata[] | null>>
   setLoggedUser: React.Dispatch<React.SetStateAction<UserData | null>>
 }
 
 const App = () => {
+  const [currentFigmaUser, setCurrentFigmaUser] = useState<User | undefined>()
   const [loggedUser, setLoggedUser] = useState<UserData | null>(null) // Set state untuk logged user current
   const [userProjectList, setUserProjectList] = useState<UserProjectMetadata[] | null>(null) // Set state untuk list project user
   const [pageSelection, setPageSelection] = useState<PageSelection>(PageSelection.LOGIN) // Current page
@@ -41,9 +44,10 @@ const App = () => {
 
       // Jika plugin controller mengirimkan pesan bahwa plugin terhubung, maka set logged user dan user project list
       if (type === 'saved-user') {
-        const { userId, projects } = content;
+        const { userId, projects, figmaUser } = content;
         if (userId) setLoggedUser({ userId })
         if (projects) setUserProjectList(projects)
+        if (figmaUser) setCurrentFigmaUser(figmaUser)
       }
     };
   }, [])
@@ -71,6 +75,8 @@ const App = () => {
         />
       case PageSelection.PROJECTS:
         return <UserProject
+          loggedUser={loggedUser}
+          currentFigmaUser={currentFigmaUser}
           setLoggedUser={setLoggedUser}
           setPageSelection={setPageSelection}
           pageSelection={pageSelection}
